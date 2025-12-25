@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <script>
+        let a = () => alert('箭头函数')
+
+        let b = n => n * n
+
+        let c = (n, m) => n + m
+
+        let d = () => {
+            let n = 2
+            let m = 3
+            return n * m
+        }
+
+        let e = function jia(n, m){
+            return n + m
+        }
+        
+        let f = function(n, m){
+            return n - m
+        }
+
+        let g = function g(a, text='hello '){
+            return text + a
+        }
+
+        function h(n, m){
+            return n ** m
+        }
+
+        alert(g('fanning'))
+        alert(f(5, 3))
+        alert(h(3, 2))
+
+    </script>
+</body>
+</html>

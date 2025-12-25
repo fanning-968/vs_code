@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>待办事项列表</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        *{
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahome, geneva, Verdana, sans-serif;
+        }
+
+        body{
+            background-color: linear-gradient(135deg, #6e8efb, #a777e3);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .todo--container{
+            width: 100%;
+            max-width: 500px;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.2);
+            overflow: hidden;
+        }
+
+        .todo-header{
+            background: #5d6afb;
+            color: white;
+            padding: 30px 25px;
+            text-align: center;
+            position: relative;;
+        }
+
+        .todo-header h1{
+            font-size: 28px;
+            font-weight: 700;
+            letter-spacing: 1px;
+            margin-bottom: 5px;
+        }
+
+        .todo-header p{
+            font-size: 16px;
+            opacity: 0.9;
+            margin-bottom: 20px;
+        }
+
+        .progress-bar {
+            height: 8px;
+            background: rgba(255, 255, 255, 0.3);
+            border-radius: 4px;
+            margin: 15px 0;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            width: 60%;
+            background: #fff;
+            border-radius: 4px;
+            transition: width 0.3s ease;
+        }
+
+        .progress-text {
+            font-size: 14px;
+            font-weight: 600;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .todo-list{
+            padding: 25px;
+        }
+
+        .task-item {
+            display: flex;
+            align-items: center;
+            padding: 15px 0;
+            border-bottom: 1 px solid #eee;
+            transition: all 0.3s ease;
+        }
+
+        .task-item:last-child {
+            border-bottom: none;
+        }
+
+        .task-checkbox {
+            width: 22px;
+            height: 22px;
+            border: 2px solid #ddd;
+            border-radius: 50%;
+            margin-right: 15px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s ease;
+        }
+
+        .task-checkbox.checked {
+            background: #5d6afb;
+            border-color: #5d6afb;
+        }
+
+        .task-checkbox.checked::after {
+            content: "✓";
+            color: white;
+            font-size: 12px;
+        }
+
+        .task-text {
+            flex: 1;
+            font-size: 17px;
+            color: #333;
+            transition: all 0.3s ease;
+        }
+
+
+    </style>
+</head>
+<body>
+    <div class="todo-container">
+        <div class="todo-header">
+            <h1>TODOLIST</h1>
+            <p>what needs to be done?</p>
+
+            <div class="progress-bar">
+                <div class="progress-fill" id=""></div>
+            </div>
+
+            <div class="progress-text">
+                <span>进度</span>
+                <span class="progress-text">3 of 5 task done</span>
+            </div>
+        </div>
+    </div>
+
+    <div class="todo-list" id="todo-list">
+        <div class="task-item" data-id="1">
+            <div class="task-checkbox"></div>
+            <div class="task-text">read the book (at least 5 pages)</div>
+        </div>
+
+        <div class="task-item checked" data-id="2">
+            <div class="task-checkbox checked"></div>
+            <div class="task-text">buy dog food</div>
+        </div>
+
+        <div class="task-item checked" data-id="3">
+            <div class="task-checkbox checked"></div>
+            <div class="task-text">call my parents</div>
+        </div>
+
+        <div class="task-item" data-id="4">
+            <div class="task-checkbox"></div>
+            <div class="task-text">clean my working place</div>
+        </div>
+
+        <div class="task-item checked" data-id="5">
+            <div class="task-checkbox checked"></div>
+            <div class="task-text">kill bill</div>
+        </div>
+    </div>
+
+    <div class="add-task">
+        <input type="text" id="new-task" placeholder="添加新任务...">
+        <button id="add-btn">添加</button>
+    </div>
+
+    <div class="todo-footer">
+        <div class="stats" id="stats">3 of 5 task done</div>
+        <button class="remove-btn" id="remove-btn">
+            <i class="fas fa-trash-alt"></i> Remove checked
+        </button>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function(){
+            const todoList = document.getelementbyid ('todo-list');
+            const newTaskInput = document.getElementById('new-task');
+            const addBtn = document.getElementById('add-btn');
+            const removeBtn =document.getElementById('remove-btn');
+            const progressBar = document.getElementById('progress');
+            const progressText = document.getElementById('progress-text');
+            const stats = document.getElementById('stats');
+
+            const tasks = [
+                { id: 1, text: 'read the book (at least 5 pages)', completed: false },
+                { id: 2, text: 'buy dog food', completed: true },
+                { id: 3, text: 'call my parents', completed: true },
+                { id: 4, text: 'clean my working place', completed: false },
+                { id: 5, text: 'kill bill', completed: true },
+            ];
+
+            function updateProgress() {
+                const totalTasks = tasks.length;
+                const completedTasks = tasks.filter(task => task.completed).length;
+                const progressPercent = (completedTasks / totalTasks) * 100;
+
+                progressBar.style.width = progressPercent + '%';
+                progressText.textContent = `${completedTasks} of ${totalTasks} task done`;
+                stats.textContent = `${completedTasks} of ${totalTasks} task done`;
+            }
+
+           function renderTasks() {
+                todoList.innerHTML = '';
+
+                tasks.forEach(task => {
+                    const taskItem = document.createElement('div');
+                    taskItem.className = `task-item ${task.completed ? 'checked' : ''}`;
+                    taskItem.dataset.id = task.id;
+
+                    taskItem.innerHTML = `
+                        <div class="task-checkbox ${task.completed ? 'checked' : ''}"></div>
+                        <div class="task-text">
+                            ${task.text}
+                            ${task.label ? `<span class="priority ${task.priority}">${task.label}</span>` : ''}
+                        </div>
+                    `;
+
+                    // 添加点击事件
+                    const checkbox = taskItem.querySelector('.task-checkbox');
+                    checkbox.addEventListener('click', () => {
+                        task.completed = !task.completed;
+                        taskItem.classList.toggle('checked', task.completed);
+                        checkbox.classList.toggle('checked', task.completed);
+                        updateProgress()
+                    });
+
+                    todoList.appendChild(taskItem);
+                });
+
+                updateProgress();
+            }
+
+            addBtn.addEventListener('click', () => {
+                const text = newTaskInput.value.trim();
+                if (text) {
+                    text.push({
+                        id: tasks.length + 1,
+                        text: text,
+                        completed: false,
+                    });
+                    newTaskInput.value = '';
+
+                    renderTasks();
+                }
+            });
+
+            newTaskInput.addEventListener('keypress', (e) => {
+                if (e.key === 'Enter') {
+                    addBtn.click();
+                }
+            })
+
+            removeBtn.addEventListener('click', () => {
+                for (let i = tasks.length - 1; i >= 0; i--) {
+                    if (tasks[i].completed) {
+                        tasks.splice(i, 1);
+                    }
+                }
+            });
+
+            renderTasks();
+        })
+    </script>
+</body>
+</html>

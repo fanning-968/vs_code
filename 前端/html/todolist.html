@@ -1,0 +1,466 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>待办事项列表</title>
+    <!-- <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"> -->
+    <style>
+        /* 全局重置和默认字体设置
+           - margin/padding 设为 0 去除浏览器默认间距
+           - box-sizing: border-box 让宽高包含 padding 和 border，便于布局计算
+           - font-family 设置页面默认字体，提供回退字体列表 */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        /* 页面背景与布局容器
+           - 使用线性渐变背景增强视觉效果
+           - min-height:100vh 保证至少撑满可视高度
+           - 使用 flex 居中外层 .todo-container（水平+垂直居中）
+           - padding 为视口边缘留出间距 */
+        body {
+            background: linear-gradient(135deg, #6e8efb, #a777e3);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+        
+        /* 待办卡片容器样式
+           - max-width 限制宽度以适配小屏设备
+           - 白色背景和圆角、阴影用于卡片式外观
+           - overflow:hidden 防止子元素溢出圆角 */
+        .todo-container {
+            width: 100%;
+            max-width: 500px;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.2);
+            overflow: hidden;
+        }
+        
+        /* 卡片头部（包含标题、进度条等）
+           - 背景色与正文区分
+           - color: white 保证文字在深色背景上可读
+           - padding 提供内边距，position:relative 为后续可能的绝对定位留位 */
+        .todo-header {
+            background: #5d6afb;
+            color: white;
+            padding: 30px 25px;
+            text-align: center;
+            position: relative;
+        }
+        
+        /* 标题样式：较大字号与加粗 */
+        .todo-header h1 {
+            font-size: 28px;
+            font-weight: 700;
+            letter-spacing: 1px;
+            margin-bottom: 5px;
+        }
+        
+        /* 副标题/提示文本，略降低不透明度以示层次 */
+        .todo-header p {
+            font-size: 16px;
+            opacity: 0.9;
+            margin-bottom: 20px;
+        }
+        
+        /* 进度条外壳：固定高度、半透明白色背景以与填充形成对比 */
+        .progress-bar {
+            height: 8px;
+            background: rgba(255, 255, 255, 0.3);
+            border-radius: 4px;
+            margin: 15px 0;
+            overflow: hidden;
+        }
+        
+        /* 进度条填充：通过修改 width 展示完成比例，transition 平滑动画 */
+        .progress-fill {
+            height: 100%;
+            width: 60%;
+            background: white;
+            border-radius: 4px;
+            transition: width 0.4s ease;
+        }
+        
+        /* 进度文本行：左右分布显示标签和数值 */
+        .progress-text {
+            font-size: 14px;
+            font-weight: 600;
+            display: flex;
+            justify-content: space-between;
+        }
+        
+        /* 任务列表区域的内边距 */
+        .todo-list {
+            padding: 25px;
+        }
+        
+        /* 单个任务项：水平排列复选区与文本，底部分隔线与过渡 */
+        .task-item {
+            display: flex;
+            align-items: center;
+            padding: 15px 0;
+            border-bottom: 1px solid #eee;
+            transition: all 0.3s ease;
+        }
+        
+        /* 去掉最后一项的分隔线，使列表结尾更干净 */
+        .task-item:last-child {
+            border-bottom: none;
+        }
+        
+        /* 复选框自定义样式：圆形边框、可点击（cursor:pointer）
+           - 使用 flex 居中内部内容（例如对勾） */
+        .task-checkbox {
+            width: 22px;
+            height: 22px;
+            border: 2px solid #ddd;
+            border-radius: 50%;
+            margin-right: 15px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s ease;
+        }
+        
+        /* 选中状态的复选框样式：背景与边框变为主题色 */
+        .task-checkbox.checked {
+            background: #5d6afb;
+            border-color: #5d6afb;
+        }
+        
+        /* 选中复选框的伪元素：显示对勾符号 */
+        .task-checkbox.checked::after {
+            content: "✓";
+            color: white;
+            font-size: 12px;
+        }
+        
+        /* 任务文本主体：flex:1 填充剩余空间，设置字体与颜色 */
+        .task-text {
+            flex: 1;
+            font-size: 17px;
+            color: #333;
+            transition: all 0.3s ease;
+        }
+        
+        /* 已完成任务的文本外观：置灰并加删除线，表明已完成 */
+        .task-item.checked .task-text {
+            color: #aaa;
+            text-decoration: line-through;
+        }
+        
+        /* 优先级标签的基础样式：圆角小标签 */
+        .priority {
+            display: inline-block;
+            padding: 3px 8px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+            margin-left: 10px;
+        }
+        
+        /* 高优先级颜色：浅红背景和红色文字 */
+        .priority.high {
+            background: #ffebee;
+            color: #f44336;
+        }
+        
+        /* 中等优先级颜色：浅黄背景和橙色文字 */
+        .priority.medium {
+            background: #fff8e1;
+            color: #ff9800;
+        }
+        
+        /* 低优先级颜色：浅绿背景和绿色文字 */
+        .priority.low {
+            background: #e8f5e9;
+            color: #4caf50;
+        }
+        
+        /* 页脚区域：显示统计与删除按钮，使用 flex 两端对齐 */
+        .todo-footer {
+            padding: 20px 25px;
+            background: #f9f9f9;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        /* 统计文字样式：较小字号，灰色文本 */
+        .stats {
+            font-size: 15px;
+            color: #666;
+            font-weight: 500;
+        }
+        
+        /* 删除按钮样式：主题红色、圆角、阴影并可点击（cursor:pointer）
+           - display:flex 让图标和文本垂直居中 */
+        .remove-btn {
+            background: #ff6b6b;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 50px;
+            font-size: 15px;
+            font-weight: 600;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 10px rgba(255, 107, 107, 0.3);
+        }
+        
+        /* 鼠标悬停删除按钮时的交互效果（颜色、上移和平滑阴影） */
+        .remove-btn:hover {
+            background: #ff5252;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 15px rgba(255, 107, 107, 0.4);
+        }
+        
+        /* 按钮内图标与文字间距 */
+        .remove-btn i {
+            margin-right: 8px;
+        }
+        
+        /* 新增任务输入区域：水平布局输入框和按钮 */
+        .add-task {
+            display: flex;
+            margin-top: 20px;
+            padding: 0 25px 25px;
+        }
+        
+        /* 新任务输入框：flex:1 占满剩余空间，左侧圆角与右侧按钮拼接 */
+        .add-task input {
+            flex: 1;
+            padding: 14px;
+            border: 2px solid #eee;
+            border-radius: 50px 0 0 50px;
+            font-size: 16px;
+            outline: none;
+            transition: border-color 0.3s;
+        }
+        
+        /* 输入框聚焦时改变边框颜色以提示输入状态 */
+        .add-task input:focus {
+            border-color: #5d6afb;
+        }
+        
+        /* 新增按钮：与输入框拼接的右侧圆角按钮，主题背景色 */
+        .add-task button {
+            background: #5d6afb;
+            color: white;
+            border: none;
+            padding: 0 25px;
+            border-radius: 0 50px 50px 0;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+        
+        /* 按钮悬停色稍微加深，提供交互反馈 */
+        .add-task button:hover {
+            background: #4a59f9;
+        }
+        
+        /* 响应式调整：小屏设备时微调间距和字号，页脚改为垂直布局
+           - media query 确保在窄屏上仍能良好展示 */
+        @media (max-width: 480px) {
+            .todo-container {
+                border-radius: 15px;
+            }
+            
+            .todo-header {
+                padding: 25px 20px;
+            }
+            
+            .todo-header h1 {
+                font-size: 24px;
+            }
+            
+            .task-item {
+                padding: 12px 0;
+            }
+            
+            .task-text {
+                font-size: 16px;
+            }
+            
+            .todo-footer {
+                flex-direction: column;
+                gap: 15px;
+                padding: 15px;
+            }
+            
+            .remove-btn {
+                width: 100%;
+                justify-content: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="todo-container">
+        <div class="todo-header">
+            <h1>TODOLIST</h1>
+            <p>what needs to be done?</p>
+            
+            <div class="progress-bar">
+                <div class="progress-fill" id="progress"></div>
+            </div>
+            
+            <div class="progress-text">
+                <span>进度</span>
+                <span id="progress-text">3 of 5 tasks done</span>
+            </div>
+        </div>
+        
+        <div class="todo-list" id="todo-list">
+            <div class="task-item" data-id="1">
+                <div class="task-checkbox"></div>
+                <div class="task-text">read the book (at least 5 pages)</div>
+            </div>
+            
+            <div class="task-item checked" data-id="2">
+                <div class="task-checkbox checked"></div>
+                <div class="task-text">buy dog food <span class="priority medium">重要</span></div>
+            </div>
+            
+            <div class="task-item checked" data-id="3">
+                <div class="task-checkbox checked"></div>
+                <div class="task-text">call my parents <span class="priority high">紧急</span></div>
+            </div>
+            
+            <div class="task-item" data-id="4">
+                <div class="task-checkbox"></div>
+                <div class="task-text">clean my working place</div>
+            </div>
+            
+            <div class="task-item checked" data-id="5">
+                <div class="task-checkbox checked"></div>
+                <div class="task-text">kill Bill <span class="priority low">电影</span></div>
+            </div>
+        </div>
+        
+        <div class="add-task">
+            <input type="text" id="new-task" placeholder="添加新任务...">
+            <button id="add-btn">添加</button>
+        </div>
+        
+        <div class="todo-footer">
+            <div class="stats" id="stats">3 of 5 tasks done</div>
+            <button class="remove-btn" id="remove-btn">
+                <i class="fas fa-trash-alt"></i> Remove checked
+            </button>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const todoList = document.getElementById('todo-list');
+            const newTaskInput = document.getElementById('new-task');
+            const addBtn = document.getElementById('add-btn');
+            const removeBtn = document.getElementById('remove-btn');
+            const progressBar = document.getElementById('progress');
+            const progressText = document.getElementById('progress-text');
+            const stats = document.getElementById('stats');
+            
+            // 初始任务数据
+            const tasks = [
+                { id: 1, text: 'read the book (at least 5 pages)', completed: false },
+                { id: 2, text: 'buy dog food', completed: true, priority: 'medium', label: '重要' },
+                { id: 3, text: 'call my parents', completed: true, priority: 'high', label: '紧急' },
+                { id: 4, text: 'clean my working place', completed: false },
+                { id: 5, text: 'kill Bill', completed: true, priority: 'low', label: '电影' }
+            ];
+            
+            // 更新进度显示
+            function updateProgress() {
+                const totalTasks = tasks.length;
+                const completedTasks = tasks.filter(task => task.completed).length;
+                const percentage = (completedTasks / totalTasks) * 100;
+                
+                progressBar.style.width = `${percentage}%`;
+                progressText.textContent = `${completedTasks} of ${totalTasks} tasks done`;
+                stats.textContent = `${completedTasks} of ${totalTasks} tasks done`;
+            }
+            
+            // 渲染任务列表
+            function renderTasks() {
+                todoList.innerHTML = '';
+                
+                tasks.forEach(task => {
+                    const taskItem = document.createElement('div');
+                    taskItem.className = `task-item ${task.completed ? 'checked' : ''}`;
+                    taskItem.dataset.id = task.id;
+                    
+                    taskItem.innerHTML = `
+                        <div class="task-checkbox ${task.completed ? 'checked' : ''}"></div>
+                        <div class="task-text">
+                            ${task.text}
+                            ${task.label ? `<span class="priority ${task.priority}">${task.label}</span>` : ''}
+                        </div>
+                    `;
+                    
+                    // 添加点击事件
+                    const checkbox = taskItem.querySelector('.task-checkbox');
+                    checkbox.addEventListener('click', () => {
+                        task.completed = !task.completed;
+                        taskItem.classList.toggle('checked', task.completed);
+                        checkbox.classList.toggle('checked', task.completed);
+                        updateProgress();
+                    });
+                    
+                    todoList.appendChild(taskItem);
+                });
+                
+                updateProgress();
+            }
+            
+            // 添加新任务
+            addBtn.addEventListener('click', () => {
+                const text = newTaskInput.value.trim();
+                if (text) {
+                    tasks.push({
+                        id: tasks.length + 1,
+                        text: text,
+                        completed: false
+                    });
+                    
+                    newTaskInput.value = '';
+                    renderTasks();
+                }
+            });
+            
+            // 按回车添加任务
+            newTaskInput.addEventListener('keypress', (e) => {
+                if (e.key === 'Enter') {
+                    addBtn.click();
+                }
+            });
+            
+            // 删除已完成任务
+            removeBtn.addEventListener('click', () => {
+                for (let i = tasks.length - 1; i >= 0; i--) {
+                    if (tasks[i].completed) {
+                        tasks.splice(i, 1);
+                    }
+                }
+                renderTasks();
+            });
+            
+            // 初始化渲染
+            renderTasks();
+        });
+    </script>
+</body>
+</html>

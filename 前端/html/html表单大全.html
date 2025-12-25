@@ -1,0 +1,535 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HTML表单元素大全</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background-color: #f5f7fa;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            background-color: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+        }
+        
+        h1 {
+            text-align: center;
+            color: #2c3e50;
+            margin-bottom: 30px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid #3498db;
+        }
+        
+        h2 {
+            color: #3498db;
+            margin: 25px 0 15px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #eaeaea;
+        }
+        
+        .form-section {
+            margin-bottom: 30px;
+            padding: 20px;
+            background-color: #f8f9fa;
+            border-radius: 8px;
+            border-left: 4px solid #3498db;
+        }
+        
+        .form-group {
+            margin-bottom: 15px;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 600;
+            color: #2c3e50;
+        }
+        
+        input[type="text"],
+        input[type="password"],
+        input[type="email"],
+        input[type="url"],
+        input[type="tel"],
+        input[type="number"],
+        input[type="search"],
+        input[type="date"],
+        input[type="time"],
+        input[type="datetime-local"],
+        input[type="month"],
+        input[type="week"],
+        select,
+        textarea {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 16px;
+            transition: border-color 0.3s;
+        }
+        
+        input:focus,
+        select:focus,
+        textarea:focus {
+            border-color: #3498db;
+            outline: none;
+            box-shadow: 0 0 0 2px rgba(52, 152, 219, 0.2);
+        }
+        
+        .checkbox-group,
+        .radio-group {
+            margin-bottom: 10px;
+        }
+        
+        .checkbox-group label,
+        .radio-group label {
+            display: flex;
+            align-items: center;
+            font-weight: normal;
+            cursor: pointer;
+        }
+        
+        input[type="checkbox"],
+        input[type="radio"] {
+            margin-right: 10px;
+            width: 18px;
+            height: 18px;
+        }
+        
+        input[type="range"] {
+            width: 100%;
+            margin: 10px 0;
+        }
+        
+        input[type="color"] {
+            width: 70px;
+            height: 40px;
+            margin: 5px 0;
+            cursor: pointer;
+        }
+        
+        input[type="file"] {
+            width: 100%;
+            padding: 10px;
+            border: 1px dashed #ddd;
+            border-radius: 4px;
+            background-color: #f9f9f9;
+        }
+        
+        button,
+        input[type="submit"],
+        input[type="reset"],
+        input[type="button"] {
+            background-color: #3498db;
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            font-size: 16px;
+            border-radius: 4px;
+            cursor: pointer;
+            margin-right: 10px;
+            transition: background-color 0.3s;
+        }
+        
+        button:hover,
+        input[type="submit"]:hover,
+        input[type="reset"]:hover,
+        input[type="button"]:hover {
+            background-color: #2980b9;
+        }
+        
+        input[type="reset"] {
+            background-color: #e74c3c;
+        }
+        
+        input[type="reset"]:hover {
+            background-color: #c0392b;
+        }
+        
+        .button-group {
+            margin-top: 20px;
+            display: flex;
+            gap: 10px;
+        }
+        
+        .output-box {
+            padding: 15px;
+            background-color: #f8f9fa;
+            border-radius: 4px;
+            border: 1px solid #e9ecef;
+            margin-top: 10px;
+        }
+        
+        .required::after {
+            content: " *";
+            color: #e74c3c;
+        }
+        
+        .note {
+            font-size: 14px;
+            color: #7f8c8d;
+            margin-top: 5px;
+        }
+        
+        fieldset {
+            padding: 15px;
+            margin-bottom: 20px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+        
+        legend {
+            padding: 0 10px;
+            font-weight: 600;
+            color: #2c3e50;
+        }
+        
+        .flex-group {
+            display: flex;
+            gap: 15px;
+        }
+        
+        .flex-group .form-group {
+            flex: 1;
+        }
+        
+        @media (max-width: 768px) {
+            .flex-group {
+                flex-direction: column;
+                gap: 0;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>HTML表单元素大全</h1>
+        
+        <form id="demoForm">
+            <!-- 文本输入 -->
+            <div class="form-section">
+                <h2>文本输入</h2>
+                
+                <div class="flex-group">
+                    <div class="form-group">
+                        <label for="textInput" class="required">文本输入</label>
+                        <input type="text" id="textInput" name="textInput" placeholder="请输入文本" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="passwordInput">密码输入</label>
+                        <input type="password" id="passwordInput" name="passwordInput" placeholder="请输入密码">
+                    </div>
+                </div>
+                
+                <div class="flex-group">
+                    <div class="form-group">
+                        <label for="emailInput">电子邮件</label>
+                        <input type="email" id="emailInput" name="emailInput" placeholder="example@domain.com">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="urlInput">网址</label>
+                        <input type="url" id="urlInput" name="urlInput" placeholder="https://example.com">
+                    </div>
+                </div>
+                
+                <div class="flex-group">
+                    <div class="form-group">
+                        <label for="telInput">电话</label>
+                        <input type="tel" id="telInput" name="telInput" placeholder="13800138000">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="searchInput">搜索</label>
+                        <input type="search" id="searchInput" name="searchInput" placeholder="搜索...">
+                    </div>
+                </div>
+            </div>
+            
+            <!-- 数字和范围 -->
+            <div class="form-section">
+                <h2>数字和范围</h2>
+                
+                <div class="flex-group">
+                    <div class="form-group">
+                        <label for="numberInput">数字输入</label>
+                        <input type="number" id="numberInput" name="numberInput" min="0" max="100" step="5">
+                        <div class="note">最小值: 0, 最大值: 100, 步长: 5</div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="rangeInput">范围选择</label>
+                        <input type="range" id="rangeInput" name="rangeInput" min="0" max="100" value="50">
+                        <div class="output-box">
+                            <output for="rangeInput" id="rangeValue">50</output>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- 日期和时间 -->
+            <div class="form-section">
+                <h2>日期和时间</h2>
+                
+                <div class="flex-group">
+                    <div class="form-group">
+                        <label for="dateInput">日期选择</label>
+                        <input type="date" id="dateInput" name="dateInput">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="timeInput">时间选择</label>
+                        <input type="time" id="timeInput" name="timeInput">
+                    </div>
+                </div>
+                
+                <div class="flex-group">
+                    <div class="form-group">
+                        <label for="datetimeInput">日期时间选择</label>
+                        <input type="datetime-local" id="datetimeInput" name="datetimeInput">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="monthInput">月份选择</label>
+                        <input type="month" id="monthInput" name="monthInput">
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="weekInput">周选择</label>
+                    <input type="week" id="weekInput" name="weekInput">
+                </div>
+            </div>
+            
+            <!-- 选择类元素 -->
+            <div class="form-section">
+                <h2>选择类元素</h2>
+                
+                <div class="form-group">
+                    <label for="selectInput">下拉选择</label>
+                    <select id="selectInput" name="selectInput">
+                        <option value="">-- 请选择 --</option>
+                        <option value="option1">选项一</option>
+                        <option value="option2">选项二</option>
+                        <option value="option3">选项三</option>
+                        <optgroup label="分组选项">
+                            <option value="option4">选项四</option>
+                            <option value="option5">选项五</option>
+                        </optgroup>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label for="multiSelect">多选下拉</label>
+                    <select id="multiSelect" name="multiSelect" multiple size="4">
+                        <option value="multi1">多选选项一</option>
+                        <option value="multi2">多选选项二</option>
+                        <option value="multi3">多选选项三</option>
+                        <option value="multi4">多选选项四</option>
+                        <option value="multi5">多选选项五</option>
+                    </select>
+                    <div class="note">使用Ctrl/Cmd键进行多选</div>
+                </div>
+                
+                <div class="form-group">
+                    <label>单选按钮组</label>
+                    <div class="radio-group">
+                        <label>
+                            <input type="radio" name="radioGroup" value="option1">
+                            单选选项一
+                        </label>
+                    </div>
+                    <div class="radio-group">
+                        <label>
+                            <input type="radio" name="radioGroup" value="option2">
+                            单选选项二
+                        </label>
+                    </div>
+                    <div class="radio-group">
+                        <label>
+                            <input type="radio" name="radioGroup" value="option3">
+                            单选选项三
+                        </label>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label>复选框组</label>
+                    <div class="checkbox-group">
+                        <label>
+                            <input type="checkbox" name="checkboxGroup" value="check1">
+                            复选框选项一
+                        </label>
+                    </div>
+                    <div class="checkbox-group">
+                        <label>
+                            <input type="checkbox" name="checkboxGroup" value="check2">
+                            复选框选项二
+                        </label>
+                    </div>
+                    <div class="checkbox-group">
+                        <label>
+                            <input type="checkbox" name="checkboxGroup" value="check3">
+                            复选框选项三
+                        </label>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- 其他输入类型 -->
+            <div class="form-section">
+                <h2>其他输入类型</h2>
+                
+                <div class="flex-group">
+                    <div class="form-group">
+                        <label for="colorInput">颜色选择</label>
+                        <input type="color" id="colorInput" name="colorInput" value="#3498db">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="fileInput">文件上传</label>
+                        <input type="file" id="fileInput" name="fileInput">
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="hiddenInput">隐藏字段</label>
+                    <input type="hidden" id="hiddenInput" name="hiddenInput" value="hiddenValue">
+                    <div class="note">这个字段对用户不可见，但会随表单提交</div>
+                </div>
+            </div>
+            
+            <!-- 多行文本 -->
+            <div class="form-section">
+                <h2>多行文本</h2>
+                
+                <div class="form-group">
+                    <label for="textareaInput">文本区域</label>
+                    <textarea id="textareaInput" name="textareaInput" rows="4" placeholder="请输入多行文本..."></textarea>
+                </div>
+            </div>
+            
+            <!-- 按钮 -->
+            <div class="form-section">
+                <h2>按钮</h2>
+                
+                <div class="button-group">
+                    <input type="submit" value="提交表单">
+                    <input type="reset" value="重置表单">
+                    <input type="button" value="普通按钮" id="normalButton">
+                    <button type="button" id="customButton">自定义按钮</button>
+                </div>
+            </div>
+            
+            <!-- 数据列表 -->
+            <div class="form-section">
+                <h2>数据列表</h2>
+                
+                <div class="form-group">
+                    <label for="datalistInput">带建议的输入框</label>
+                    <input type="text" id="datalistInput" name="datalistInput" list="suggestions">
+                    <datalist id="suggestions">
+                        <option value="选项一">
+                        <option value="选项二">
+                        <option value="选项三">
+                        <option value="其他选项">
+                        <option value="更多选项">
+                    </datalist>
+                </div>
+            </div>
+            
+            <!-- 输出元素 -->
+            <div class="form-section">
+                <h2>输出元素</h2>
+                
+                <div class="form-group">
+                    <label for="aValue">值A</label>
+                    <input type="number" id="aValue" name="aValue" value="10" oninput="calculate()">
+                </div>
+                
+                <div class="form-group">
+                    <label for="bValue">值B</label>
+                    <input type="number" id="bValue" name="bValue" value="20" oninput="calculate()">
+                </div>
+                
+                <div class="output-box">
+                    <label>计算结果: </label>
+                    <output name="result" id="result" for="aValue bValue">30</output>
+                </div>
+            </div>
+            
+            <!-- 字段集和图例 -->
+            <fieldset>
+                <legend>字段组示例</legend>
+                
+                <div class="form-group">
+                    <label for="field1">字段一</label>
+                    <input type="text" id="field1" name="field1">
+                </div>
+                
+                <div class="form-group">
+                    <label for="field2">字段二</label>
+                    <input type="text" id="field2" name="field2">
+                </div>
+            </fieldset>
+        </form>
+    </div>
+
+    <script>
+        // 范围滑块值显示
+        const rangeInput = document.getElementById('rangeInput');
+        const rangeValue = document.getElementById('rangeValue');
+        
+        rangeInput.addEventListener('input', function() {
+            rangeValue.value = this.value;
+        });
+        
+        // 计算输出
+        function calculate() {
+            const a = parseInt(document.getElementById('aValue').value) || 0;
+            const b = parseInt(document.getElementById('bValue').value) || 0;
+            document.getElementById('result').value = a + b;
+        }
+        
+        // 普通按钮点击事件
+        document.getElementById('normalButton').addEventListener('click', function() {
+            alert('普通按钮被点击了!');
+        });
+        
+        // 自定义按钮点击事件
+        document.getElementById('customButton').addEventListener('click', function() {
+            alert('自定义按钮被点击了!');
+        });
+        
+        // 表单提交事件
+        document.getElementById('demoForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            alert('表单已提交！在实际应用中，数据将被发送到服务器。');
+        });
+        
+        // 表单重置事件
+        document.getElementById('demoForm').addEventListener('reset', function() {
+            setTimeout(function() {
+                alert('表单已重置！所有字段已恢复默认值。');
+            }, 100);
+        });
+    </script>
+</body>
+</html>

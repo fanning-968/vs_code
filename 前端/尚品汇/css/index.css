@@ -1,0 +1,118 @@
+.container {
+    width: 1190px;
+    margin: 0 auto;
+}
+
+/* #region顶部导航条start */
+.topbar {
+    height: 30px;
+    background: #ECECEC;
+}
+
+.welcome {
+    height: 30px;
+    line-height: 30px;
+    color: #666666;
+    font-size: 0;
+}
+
+.welcome span, .welcome a {
+    font-size: 12px;
+}
+
+.welcome .hello {
+    margin-right: 28px;
+
+}
+
+.welcome .login {
+    padding-right: 10px;
+    border-right: 1px solid;
+}
+
+.welcome .register {
+    margin-left: 10px;
+}
+
+.topbar-nav .list{
+    height: 30px;
+    line-height: 30px;
+}
+
+.topbar-nav .list li {
+    float: left;
+}
+
+.topbar-nav .list a {
+    padding: 0 15px;
+    border-right: 1px solid #666666;
+}
+
+.topbar-nav .list li:last-child a {
+    border: none;
+}
+
+.topbar-nav .list li:first-child a {
+    padding-left: 0;
+}
+/* #endregion顶部导航条end */
+
+/* #region头部导航条start */
+.header {
+    height: 120px;
+}
+
+.header .search form {
+    margin-top: 42px;
+    font-size: 0;
+}
+
+.header .search input {
+    width: 508px;
+    height: 34px;
+    border: 1px solid rgba(221,48,45,1);
+}
+
+.header .search button {
+    width: 80px;
+    height: 36px;
+    background: #DD302D;
+    border: 1px solid rgba(221,48,45,1);
+    vertical-align: top;
+    background-image: url('../images/serch_icon.png');
+    background-repeat: no-repeat;
+    background-position: 28px 6px;
+}
+/* #endregion头部导航条end */
+
+/* #region主导航条start */
+
+.main-nav {
+    height: 48px;
+    border-bottom: 1px solid rgba(221,48,45,1);
+}
+.main-nav .all-types {
+    width: 190px;
+    height: 48px;
+    background: #DD302D;
+    line-height: 48px;
+    text-align: center;
+    font-size: 16px;
+    color: #FFFFFF;
+} 
+
+.main-nav-list {
+    height: 48px;
+    line-height: 48px;
+}
+
+.main-nav li {
+    float: left;
+    margin: 0 10px;
+    font-size: 16px;
+}
+/* #endregion主导航条end */
+
+/* #region主要内容区 */
+
+/* #endregion主要内容区 */
